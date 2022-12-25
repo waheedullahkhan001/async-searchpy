@@ -12,7 +12,7 @@ results = []
 async def search(path: pathlib.Path, keyword: str, dirs: list[pathlib.Path]):
     try:
         for child in path.iterdir():
-            if keyword in child.name:
+            if keyword in child.name.lower():
                 print(child)
                 results.append(child)
 
