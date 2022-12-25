@@ -57,10 +57,11 @@ if __name__ == '__main__':
     input_path = pathlib.Path(input_path)
     while not input_path.exists() or not input_path.is_dir():
         input_path = input('Invalid path. Enter path to search: ')
+        input_path = pathlib.Path(input_path)
     
-    input_keyword = input('Enter keyword to search for: ')
+    input_keyword = input('Enter keyword to search for: ').lower()
     while not input_keyword:
-        input_keyword = input('Invalid keyword. Enter keyword to search for: ')
+        input_keyword = input('Invalid keyword. Enter keyword to search for: ').lower()
 
     # Start the timer
     start_time = time.perf_counter()
