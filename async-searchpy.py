@@ -18,7 +18,7 @@ async def search(path: pathlib.Path, keyword: str, dirs: list[pathlib.Path]):
 
             if child.is_dir():
                 dirs.append(child)
-    except PermissionError:
+    except OSError:
         pass
 
 async def search_all(paths: list[pathlib.Path], keyword: str) -> list[pathlib.Path]:
