@@ -4,24 +4,33 @@ import pathlib
 import asyncio
 import time
 
-
+# List to store tasks
 tasks = []
+
+# List to store results
 results = []
 
-
+# Function to search for a given keyword in the file names within a directory
 async def search(path: pathlib.Path, keyword: str, dirs: list[pathlib.Path]):
+    # Try to iterate through the contents of the directory
     try:
+        # Iterate through the contents of the directory
         for child in path.iterdir():
+            # If the keyword is in the file name, append it to the results list
             if keyword in child.name.lower():
                 print(child)
                 results.append(child)
 
+            # If the item is a directory, add it to the dirs list
             if child.is_dir():
                 dirs.append(child)
+    # Catch any OSErrors
     except OSError:
         pass
 
+# Function to search all directories in the list
 async def search_all(paths: list[pathlib.Path], keyword: str) -> list[pathlib.Path]:
+    # List to store subdirectories
     dirs = []
 
     # Create a task for each path
@@ -55,11 +64,13 @@ if __name__ == '__main__':
     # Get the path and keyword to search for
     input_path = input('Enter path to search: ')
     input_path = pathlib.Path(input_path)
+    # Validate that the input path exists and is a directory
     while not input_path.exists() or not input_path.is_dir():
         input_path = input('Invalid path. Enter path to search: ')
         input_path = pathlib.Path(input_path)
     
     input_keyword = input('Enter keyword to search for: ').lower()
+    # Validate that the input keyword is not empty
     while not input_keyword:
         input_keyword = input('Invalid keyword. Enter keyword to search for: ').lower()
 
@@ -72,5 +83,5 @@ if __name__ == '__main__':
     # End the timer
     end_time = time.perf_counter()
 
-    # Print the time it took to complete the search
-    print(f'Finished in: {round((end_time - start_time) * 1000, 2)} ms')
+    # Print the time taken
+    print(f'Time taken: {end_time - start_time} seconds')
