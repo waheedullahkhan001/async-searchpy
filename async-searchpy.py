@@ -3,6 +3,7 @@
 import pathlib
 import asyncio
 import time
+import re
 
 # List to store tasks
 tasks = []
@@ -10,14 +11,14 @@ tasks = []
 # List to store results
 results = []
 
-# Function to search for a given keyword in the file names within a directory
-async def search(path: pathlib.Path, keyword: str, dirs: list[pathlib.Path]):
+# Function to search for a given regex in the file names within a directory
+async def search(path: pathlib.Path, regex: str, dirs: list[pathlib.Path]):
     # Try to iterate through the contents of the directory
     try:
         # Iterate through the contents of the directory
         for child in path.iterdir():
-            # If the keyword is in the file name, append it to the results list
-            if keyword in child.name.lower():
+            # If file name matches regex, add it to the results list
+            if re.search(regex, child.name.lower()):
                 print(child)
                 results.append(child)
 
@@ -29,13 +30,13 @@ async def search(path: pathlib.Path, keyword: str, dirs: list[pathlib.Path]):
         pass
 
 # Function to search all directories in the list
-async def search_all(paths: list[pathlib.Path], keyword: str) -> list[pathlib.Path]:
+async def search_all(paths: list[pathlib.Path], regex: str) -> list[pathlib.Path]:
     # List to store subdirectories
     dirs = []
 
     # Create a task for each path
     for path in paths:
-        search_task = asyncio.create_task(search(path, keyword, dirs))
+        search_task = asyncio.create_task(search(path, regex, dirs))
         tasks.append(search_task)
 
     # Wait for all tasks to complete
@@ -46,11 +47,11 @@ async def search_all(paths: list[pathlib.Path], keyword: str) -> list[pathlib.Pa
     
     return dirs
 
-async def main(path: pathlib.Path, keyword: str):
+async def main(path: pathlib.Path, regex: str):
     # Start the search
-    dirs_remaining = await asyncio.create_task(search_all([path], keyword))
+    dirs_remaining = await asyncio.create_task(search_all([path], regex))
     while dirs_remaining:
-        dirs_remaining = await asyncio.create_task(search_all(dirs_remaining, keyword))
+        dirs_remaining = await asyncio.create_task(search_all(dirs_remaining, regex))
 
     # Print the number of results
     print(f'Found {len(results)} results')
@@ -61,7 +62,7 @@ async def main(path: pathlib.Path, keyword: str):
 
 
 if __name__ == '__main__':
-    # Get the path and keyword to search for
+    # Get the path and regex to search for
     input_path = input('Enter path to search: ')
     input_path = pathlib.Path(input_path)
     # Validate that the input path exists and is a directory
@@ -69,16 +70,16 @@ if __name__ == '__main__':
         input_path = input('Invalid path. Enter path to search: ')
         input_path = pathlib.Path(input_path)
     
-    input_keyword = input('Enter keyword to search for: ').lower()
-    # Validate that the input keyword is not empty
-    while not input_keyword:
-        input_keyword = input('Invalid keyword. Enter keyword to search for: ').lower()
+    input_regex = input('Enter regex to search for: ').lower()
+    # Validate that the input regex is not empty
+    while not input_regex:
+        input_regex = input('Invalid regex. Enter regex to search for: ').lower()
 
     # Start the timer
     start_time = time.perf_counter()
     
     # Run the main function
-    asyncio.run(main(input_path, input_keyword))
+    asyncio.run(main(input_path, input_regex))
 
     # End the timer
     end_time = time.perf_counter()
