@@ -18,7 +18,7 @@ async def search(path: pathlib.Path, regex: str, dirs: list[pathlib.Path]):
         # Iterate through the contents of the directory
         for child in path.iterdir():
             # If file name matches regex, add it to the results list
-            if re.search(regex, child.name.lower()):
+            if re.search(regex, child.name.lower(), re.IGNORECASE):
                 print(child)
                 results.append(child)
 
